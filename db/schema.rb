@@ -11,14 +11,23 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130624201917) do
+ActiveRecord::Schema.define(:version => 20130624211706) do
+
+  create_table "priorities", :force => true do |t|
+    t.integer  "urgency_index"
+    t.string   "name"
+    t.string   "color"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
 
   create_table "tasks", :force => true do |t|
     t.text     "desc"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
     t.date     "duedate"
     t.string   "name"
+    t.integer  "priority_id"
   end
 
 end
