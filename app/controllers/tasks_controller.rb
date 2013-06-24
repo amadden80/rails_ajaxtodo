@@ -3,13 +3,9 @@ class TasksController < ApplicationController
 		@task = Task.new
 	end
 
-	def index
-		@tasks = Task.all
-	end
-
 	def create
-		@task = Task.create(params[:task])
+		@task = Task.new(desc: params['desc'])
 		@task.save!
-		render :index
+		render nothing: true
 	end
 end

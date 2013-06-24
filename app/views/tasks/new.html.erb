@@ -5,8 +5,14 @@
 
 <script>
 $(function(){
-	$('#submit').click(function(){
+	$('#submit').click(function(e){
+		//prevents the default behavior of the form, i.e. submitting the form
+		e.preventDefault();
+		//some action
 		
+		$.post('/tasks', {desc: 'desc'}, function(data){
+			alert('hi');
+		});
 	});
 })
 </script>
