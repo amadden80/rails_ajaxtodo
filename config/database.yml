@@ -4,4 +4,4 @@ development:
   database: ajaxtodos
   host: localhost
   pool: 5
-  username: change_me_in_database_ymldsfs
+  username: change_me_in_database_yml
