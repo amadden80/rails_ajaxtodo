@@ -1,21 +1,51 @@
 = form_for @task do |f|
+  = f.label :name
+  = f.text_field :name
+  = f.label :desc
   = f.text_field :desc
+  = f.label :duedate
+  = f.text_field :duedate
   = f.submit id: 'submit'
-#list
+
+%ul#list
   - @tasks.each do |t|
     .task= t.desc
+
 :javascript
   $(function(){
   	$('#submit').on('click', function(e){
   		//prevents the default behavior of the form, i.e. submitting the form
   		e.preventDefault();
-  		//some action
-  		
-  		$.post('/tasks', {desc: $('#task_desc').val() }, function(data){
-  			$('#list').append('<div class="task">'+data+'</div>')
+
+          var settings = {
+                                  task:{
+                                    name: $('#task_name').val(),
+                                    desc: $('#task_desc').val(),
+                                    duedate: $('#task_duedate').val()
+                                  }
+                                }
+
+  		$.post('/tasks', settings, function(data){
+  			var task = $('<li>').text(data)
+                  $('#list').append(task)
   			$('#task_desc').val('')
   		});
   	});
-  
-  	// $('#list').load('/tasks')
   })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

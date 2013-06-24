@@ -1,3 +1,3 @@
 class Task < ActiveRecord::Base
-  attr_accessible :desc
+  attr_accessible :name, :desc, :duedate
 end

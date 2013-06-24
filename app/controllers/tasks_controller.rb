@@ -5,7 +5,8 @@ class TasksController < ApplicationController
 	end
 
 	def create
-		task = Task.new(desc: params['desc'])
+		binding.pry
+		task = Task.new(name: params['name'], desc: params['desc'], duedate: params['duedate'])
 		task.save!
 		render text: task.desc
 	end
