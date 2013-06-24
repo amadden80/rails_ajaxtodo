@@ -3,16 +3,25 @@
 	<%= f.submit id: 'submit' %>
 <% end %>
 
+<div id="list">
+	<% @tasks.each do |t| %>
+		<div class="task"><%= t.desc %></div>
+	<% end %>
+</div>
+
 <script>
 $(function(){
-	$('#submit').click(function(e){
+	$('#submit').on('click', function(e){
 		//prevents the default behavior of the form, i.e. submitting the form
 		e.preventDefault();
 		//some action
 		
-		$.post('/tasks', {desc: 'desc'}, function(data){
-			alert('hi');
+		$.post('/tasks', {desc: $('#task_desc').val() }, function(data){
+			$('#list').append('<div class="task">'+data+'</div>')
+			$('#task_desc').val('')
 		});
 	});
+
+	// $('#list').load('/tasks')
 })
 </script>
