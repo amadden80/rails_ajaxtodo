@@ -2,6 +2,7 @@ class TasksController < ApplicationController
   def new
     @task = Task.new
     @tasks = Task.all
+    @priorities = Priority.all
   end
 
   def create

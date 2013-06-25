@@ -3,12 +3,14 @@
   = f.text_field :name
   = f.label :urgency_index
   = f.number_field :urgency_index
+
   = f.label :color
-  = f.text_field :color
+  %input#priority_color{type: 'color', name: 'priority[color]'}
+
   - Task.all.each do |task|
     = check_box_tag "priority[task_ids][]", task.id, @priority.tasks.include?(task)
     = task.name
-  / = f.collection_select :task_ids, Task.all, :id, :name, {:include_blank => true}, {multiple: true}
+  /= f.collection_select :task_ids, Task.all, :id, :name, {:include_blank => true}, {multiple: true}
   = f.submit id: 'submit'
 
 %table#priorities

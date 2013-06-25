@@ -7,7 +7,7 @@
   = f.text_field :duedate
   = f.label :priority_id
   / = f.select :priority_id, Priority.all.map{|priority| [priority.name, priority.id]}, :include_blank => true, :prompt => "-- Choose Priority --"
-  = f.collection_select :priority_id, Priority.all, :id, :name, include_blank: true, prompt: '-- Choose Priority --'
+  = f.collection_select :priority_id, @priorities, :id, :name, include_blank: true, prompt: '-- Choose Priority --'
   = f.submit id: 'submit'
 
 %table#tasks
