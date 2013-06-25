@@ -1,7 +1,7 @@
 class TasksController < ApplicationController
   def new
     @task = Task.new
-    @tasks = Task.all
+    @tasks = Task.order('"desc" ASC')
     @priorities = Priority.all
   end
 

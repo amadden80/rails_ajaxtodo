@@ -1,4 +1,23 @@
 $(function(){
+
+  function add_node(task) {
+    var row_list = $('#tasks tbody').children();
+    for(var i=0; i< row_list.size(); i++){
+      node = $(row_list[i]);
+      node_desc = node.children('.desc').text();
+      task_desc = task.children('.desc').text();
+      if (task_desc < node_desc) {
+        task.insertBefore(node);
+        return;
+      }
+    }
+    $('#tasks tbody').append(task);
+  }
+
+  $('th a').on('click', function(){
+
+  });
+
   $('#submit').on('click', function(e){
     //prevents the default behavior of the form, i.e. submitting the form
     //Notice that if this file fails to load or your syntax errors, you will not prevent the default and
@@ -18,10 +37,11 @@ $(function(){
     $.post('/tasks', settings, function(data){
       //Construct an additional row to add to the table, representing one task and its attributes
       var task = $('<tr>');
-      $('<td>').text(data.name).appendTo(task);
-      $('<td>').text(data.desc).appendTo(task);
+      $('<td>').addClass('name').text(data.name).appendTo(task);
+      $('<td>').addClass('desc').text(data.desc).appendTo(task);
       $('<td>').text(data.duedate).appendTo(task);
-      $('#tasks').append(task);
+      // $('#tasks tbody').append(task);
+      add_node(task);
 
       //Clear form inputs
       $('#new_task input[type=text]').val('');
