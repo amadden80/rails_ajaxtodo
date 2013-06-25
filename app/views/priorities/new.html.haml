@@ -1,0 +1,45 @@
+= form_for @priority do |f|
+  = f.label :name
+  = f.text_field :name
+  = f.label :urgency_index
+  = f.number_field :urgency_index
+  = f.label :color
+  = f.text_field :color
+  - Task.all.each do |task|
+    = check_box_tag "priority[task_ids][]", task.id, @priority.tasks.include?(task)
+    = task.name
+  / = f.collection_select :task_ids, Task.all, :id, :name, {:include_blank => true}, {multiple: true}
+  = f.submit id: 'submit'
+
+%table#priorities
+  %thead
+    %tr
+      %th Name
+      %th Urgency Index
+      %th Color
+      %th Color
+  %tbody
+    - @priorities.each do |priority|
+      %tr
+        %td= priority.name
+        %td= priority.urgency_index
+        %td= priority.color
+        %td{style: "background-color: #{priority.color}"}
+
+= javascript_include_tag 'priorities'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

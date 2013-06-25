@@ -5,11 +5,23 @@
   = f.text_field :desc
   = f.label :duedate
   = f.text_field :duedate
+  = f.label :priority_id
+  / = f.select :priority_id, Priority.all.map{|priority| [priority.name, priority.id]}, :include_blank => true, :prompt => "-- Choose Priority --"
+  = f.collection_select :priority_id, Priority.all, :id, :name, include_blank: true, prompt: '-- Choose Priority --'
   = f.submit id: 'submit'
 
-%ul#list
-  - @tasks.each do |t|
-    %li.task= t.desc
+%table#tasks
+  %thead
+    %tr
+      %th Name
+      %th Description
+      %th Due Date
+  %tbody
+    - @tasks.each do |task|
+      %tr
+        %td= task.name
+        %td= task.desc
+        %td= task.duedate
 
 = javascript_include_tag 'tasks'
 

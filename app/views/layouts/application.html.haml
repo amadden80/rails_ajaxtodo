@@ -1,0 +1,14 @@
+!!!
+%html
+  %head
+    %title Ajaxtodo
+    = stylesheet_link_tag    "application", :media => "all"
+    = javascript_include_tag "application"
+    = csrf_meta_tags
+  %body
+    .row
+      = render partial: '/layouts/partials/nav'
+      = yield
+    / Foundation initialization javascript
+    :javascript
+      $(document).foundation();
