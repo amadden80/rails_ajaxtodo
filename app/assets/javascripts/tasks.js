@@ -14,9 +14,23 @@ $(function(){
     $('#tasks tbody').append(task);
   }
 
-  $('th a').on('click', function(){
-
+  $('th a').on('click', function(e){
+    e.preventDefault();
+    sorted = $('#tasks tbody tr').sort(sort_by_name);
+    $('#tasks tbody').empty().append(sorted);
   });
+
+  function sort_by_name(a, b){
+    name_a = $(a).children('.name').text();
+    name_b = $(b).children('.name').text();
+    if(name_a > name_b){
+      return 1;
+    } else if (name_a < name_b){
+      return -1;
+    } else {
+      return 0;
+    }
+  }
 
   $('#submit').on('click', function(e){
     //prevents the default behavior of the form, i.e. submitting the form
