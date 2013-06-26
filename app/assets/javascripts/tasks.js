@@ -49,6 +49,15 @@ function bind_column_sort_action_to(link_element) {
   });
 }
 
+function bind_edit_button_to(edit_button) {
+  edit_button.on('click', function(e) {
+    e.preventDefault();
+    var task_id = $(this).attr('data-id');
+    var task_row = $(this).parent().parent();
+    var name = $.trim(task_row.find('.name').text());
+  });
+}
+
 //Activates the event handler binding to the delete buttons in the table.
 function bind_delete_button_action_to(link_element) {
   //takes a jQuery element name 'link_element' and then applies an .on() etc. on it
@@ -118,12 +127,14 @@ function bind_task_create_to(submit_element){
 
       //make a new td for the delete and view options
       var options = $('<td>').addClass('options');
-      var view_button = $('<a>').text('View').attr('href', '#').addClass('button view-button small').data('id', data.task.id).appendTo(options);
+      // var view_button = $('<a>').text('View').attr('href', '#').addClass('button view-button small').data('id', data.task.id).appendTo(options);
       var delete_button = $('<a>').text('Delete').attr('data-id', data.task.id).attr('href', '#').addClass('button delete-button small alert').appendTo(options);
+      var edit_button = $('<a>').text('Edit').attr('data-id', data.task.id).attr('href', '#').addClass('button edit-button small').appendTo(options);
       options.appendTo(task);
 
       // $('#tasks tbody').append(task);
       add_node(task);
+      bind_delete_button_action_to($('.delete-button'));
 
       //Clear form inputs
       $('#new_task input[type=text]').val('');
@@ -143,6 +154,10 @@ $(function(){
   //When the user clicks on the form's submit button, creates a new task and displays it in the table of tasks, sorted by priority.urgency_index
   var task_form_submit = $('#submit');
   bind_task_create_to(task_form_submit);
+
+  //Call our bind function and bind onclick action to edit buttons
+  var edit_button_elements = $('.edit-button');
+  bind_edit_button_to(edit_button_elements);
 
   //Call our bind function and bind onclick action to delete buttons
   var delete_button_elements = $('.delete-button');

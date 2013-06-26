@@ -15,14 +15,21 @@
   %thead
     %tr
       %th
+      %th
         = link_to 'Name', '#', id: 'name-sort'
       %th
         = link_to 'Desc', '#', id: 'desc-sort'
       %th
         = link_to 'Duedate', '#', id: 'duedate-sort'
+        %th
   %tbody
     - @tasks.each do |task|
       %tr{style: "background-color: #{task.priority.color}"}
+        %td
+          = link_to '#' do
+            %i.general.foundicon-up-arrow
+          = link_to '#' do
+            %i.general.foundicon-down-arrow
         %td.name
           = task.name
         %td.desc
@@ -32,8 +39,9 @@
         %td.urgency-index{style: 'display: none;'}
           = task.priority.urgency_index
         %td.options
-          =link_to 'View', '#', class: 'button view-button small', :'data-id' => task.id
+          / =link_to 'View', '#', class: 'button view-button small', :'data-id' => task.id
           =link_to 'Delete', '#', class: 'button delete-button small alert', :'data-id' => task.id
+          =link_to 'Edit', '#', class: 'button edit-button small', :'data-id' => task.id
 
 = javascript_include_tag 'tasks'
 
