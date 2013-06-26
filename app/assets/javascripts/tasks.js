@@ -1,5 +1,8 @@
+//START VARIABLE DEFINITIONS
 var sort_column;
+//END VARIABLE DEFINITIONS
 
+//START FUNCTION DEFINITIONS
 function add_node(task) {
   task_name = task.children('.name').text();
   task_urgency = task.children('.urgency-index').text();
@@ -25,6 +28,8 @@ function add_node(task) {
 function sort_by_column(a, b){
   col_a = $(a).children('.'+sort_column).text();
   col_b = $(b).children('.'+sort_column).text();
+
+  // col_a == col_b ? 0 : (col_a > col_b ? 1 : -1)
   if(col_a > col_b){
     return 1;
   } else if (col_a < col_b){
@@ -33,22 +38,9 @@ function sort_by_column(a, b){
     return 0;
   }
 }
+//END FUNCTION DEFINITIONS
 
-// //A
-// function sort_by_urgency_then_name(a, b){
-//   urg_a = $(a).children('.urgency-id').text();
-//   name_a = $(a).children('.urgency-id').text();
-//   urg_b = $(b).children('.urgency').text();
-//   name_b = $(b).children('.name').text();
-//   if(col_a > col_b){
-//     return 1;
-//   } else if (col_a < col_b){
-//     return -1;
-//   } else {
-//     return 0;
-//   }
-// }
-
+//START DOM-READY CODE AND EVENT HANDLERS
 $(function(){
 
   //When any of the th links is clicked, sorts by the relevant field. I have refactored this to only be a single event handler
