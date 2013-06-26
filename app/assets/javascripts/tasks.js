@@ -68,7 +68,21 @@ function bind_delete_button_action_to(link_element) {
       success: function(data){
         console.log('Ajax transmitted.  Heres the data');
         console.log(data);
-        task_row.fadeOut(500);
+
+        // task_row.fadeOut(500);
+
+        // task_row.fadeOut(500).delay(500).remove();
+
+        // task_row.fadeOut(500, function(){
+        //   $(this).remove();
+        // });
+
+        task_row.animate({
+          backgroundColor: 'red'
+        }, 300, function(){
+          $(this).fadeOut(300);
+        });
+
       }
     });
     return link_element;
