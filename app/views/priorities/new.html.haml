@@ -22,9 +22,12 @@
   %tbody
     - @priorities.each do |priority|
       %tr
-        %td= priority.name
-        %td= priority.urgency_index
-        %td= priority.color
+        %td
+          = priority.name
+        %td
+          = priority.urgency_index
+        %td
+          = priority.color
         %td{style: "background-color: #{priority.color}"}
 
 = javascript_include_tag 'priorities'

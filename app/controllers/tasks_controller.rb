@@ -1,7 +1,7 @@
 class TasksController < ApplicationController
   def new
     @task = Task.new
-    @tasks = Task.joins(:priority).find(:all, order: 'priorities.urgency_index DESC, name' )
+    @tasks = Task.joins(:priority).order('priorities.urgency_index DESC, name' )
     @priorities = Priority.all
   end
 

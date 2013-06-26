@@ -32,6 +32,7 @@ $(function() {
       $('#new_priority input[type=text], #new_priority input[type=number]').val('');
     });
   });
+
 });
 
 

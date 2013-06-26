@@ -22,10 +22,14 @@
   %tbody
     - @tasks.each do |task|
       %tr{style: "background-color: #{task.priority.color}"}
-        %td.name= task.name
-        %td.desc= task.desc
-        %td.duedate= task.duedate
-        %td.urgency-index{style: 'display: none;'}= task.priority.urgency_index
+        %td.name
+          = task.name
+        %td.desc
+          = task.desc
+        %td.duedate
+          = task.duedate
+        %td.urgency-index{style: 'display: none;'}
+          = task.priority.urgency_index
 
 = javascript_include_tag 'tasks'
 
