@@ -77,6 +77,8 @@ function bind_delete_button_action_to(link_element) {
         //   $(this).remove();
         // });
 
+        //In order to animate color, we need to also add the jQuery UI library. Normal jQuery can animate sizes and positions just fine, but
+        // is weirdly missing the color animation feature. Notice that I have included the jQuery UI library in my application layout file
         task_row.animate({
           backgroundColor: 'red'
         }, 300, function(){
