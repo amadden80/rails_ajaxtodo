@@ -1,4 +1,7 @@
 $(function() {
+  //Initializes the minicolors color picke on page load
+  $('#priority_color').minicolors();
+
   $('#submit').on('click', function(e) {
     //prevents the default behavior of the form, i.e. submitting the form
     //Notice that if this file fails to load or your syntax errors, you will not prevent the default and

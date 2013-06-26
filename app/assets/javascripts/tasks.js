@@ -1,36 +1,68 @@
+var sort_column;
+
+function add_node(task) {
+  task_name = task.children('.name').text();
+  task_urgency = task.children('.urgency-index').text();
+  var row_list = $('#tasks tbody').children();
+
+  for(var i=0; i< row_list.size(); i++){
+    node = $(row_list[i]);
+    node_name = node.children('.name').text();
+    node_urgency = node.children('.urgency-index').text();
+
+    if (task_urgency > node_urgency) {
+      task.insertBefore(node);
+      return;
+    } else if ((task_urgency == node_urgency) && task_name < node_name){
+      task.insertBefore(node);
+      return;
+    }
+  }
+  $('#tasks tbody').append(task);
+}
+
+//A field-agnostic single-column sorter
+function sort_by_column(a, b){
+  col_a = $(a).children('.'+sort_column).text();
+  col_b = $(b).children('.'+sort_column).text();
+  if(col_a > col_b){
+    return 1;
+  } else if (col_a < col_b){
+    return -1;
+  } else {
+    return 0;
+  }
+}
+
+// //A
+// function sort_by_urgency_then_name(a, b){
+//   urg_a = $(a).children('.urgency-id').text();
+//   name_a = $(a).children('.urgency-id').text();
+//   urg_b = $(b).children('.urgency').text();
+//   name_b = $(b).children('.name').text();
+//   if(col_a > col_b){
+//     return 1;
+//   } else if (col_a < col_b){
+//     return -1;
+//   } else {
+//     return 0;
+//   }
+// }
+
 $(function(){
 
-  function add_node(task) {
-    var row_list = $('#tasks tbody').children();
-    for(var i=0; i< row_list.size(); i++){
-      node = $(row_list[i]);
-      node_desc = node.children('.desc').text();
-      task_desc = task.children('.desc').text();
-      if (task_desc < node_desc) {
-        task.insertBefore(node);
-        return;
-      }
-    }
-    $('#tasks tbody').append(task);
-  }
-
+  //When any of the th links is clicked, sorts by the relevant field. I have refactored this to only be a single event handler
+  //by grabbing the field title out of the link's id. A little dangerous because if I change my HTML much it breaks my JS
   $('th a').on('click', function(e){
     e.preventDefault();
-    sorted = $('#tasks tbody tr').sort(sort_by_name);
+    //grabs everything but the '_sort' from the link's id and sets the sort_column variable to that prefix for use in sort_by_column
+    var sort_id = $(this).attr('id');
+    var id_prefix = sort_id.substr(0, sort_id.length - 5);
+    sort_column = id_prefix;
+
+    sorted = $('#tasks tbody tr').sort(sort_by_column);
     $('#tasks tbody').empty().append(sorted);
   });
-
-  function sort_by_name(a, b){
-    name_a = $(a).children('.name').text();
-    name_b = $(b).children('.name').text();
-    if(name_a > name_b){
-      return 1;
-    } else if (name_a < name_b){
-      return -1;
-    } else {
-      return 0;
-    }
-  }
 
   $('#submit').on('click', function(e){
     //prevents the default behavior of the form, i.e. submitting the form
@@ -50,10 +82,11 @@ $(function(){
 
     $.post('/tasks', settings, function(data){
       //Construct an additional row to add to the table, representing one task and its attributes
-      var task = $('<tr>');
-      $('<td>').addClass('name').text(data.name).appendTo(task);
-      $('<td>').addClass('desc').text(data.desc).appendTo(task);
-      $('<td>').text(data.duedate).appendTo(task);
+      var task = $('<tr>').css('background-color', data.priority.color);
+      $('<td>').addClass('name').text(data.task.name).appendTo(task);
+      $('<td>').addClass('desc').text(data.task.desc).appendTo(task);
+      $('<td>').addClass('duedate').text(data.task.duedate).appendTo(task);
+      $('<td>').addClass('urgency-index').text(data.priority.urgency_index).hide().appendTo(task);
       // $('#tasks tbody').append(task);
       add_node(task);
 

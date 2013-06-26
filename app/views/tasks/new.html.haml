@@ -14,15 +14,18 @@
   %thead
     %tr
       %th
-        = link_to 'Name', '#'
-      %th Description
-      %th Due Date
+        = link_to 'Name', '#', id: 'name-sort'
+      %th
+        = link_to 'Desc', '#', id: 'desc-sort'
+      %th
+        = link_to 'Duedate', '#', id: 'duedate-sort'
   %tbody
     - @tasks.each do |task|
-      %tr
+      %tr{style: "background-color: #{task.priority.color}"}
         %td.name= task.name
         %td.desc= task.desc
-        %td= task.duedate
+        %td.duedate= task.duedate
+        %td.urgency-index{style: 'display: none;'}= task.priority.urgency_index
 
 = javascript_include_tag 'tasks'
 
