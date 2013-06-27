@@ -1,4 +1,4 @@
-var sort_column;
+var sort_column = 'urgency-index';
 
 function add_node(task) {
   task_name = task.children('.name').text();
@@ -23,14 +23,19 @@ function add_node(task) {
 
 //A field-agnostic single-column sorter
 function sort_by_column(a, b) {
-  col_a = $(a).children('.' + sort_column).text();
-  col_b = $(b).children('.' + sort_column).text();
+  col_a = $.trim($(a).children('.' + sort_column).text());
+  col_b = $.trim($(b).children('.' + sort_column).text());
+
+  if(sort_column === 'urgency-index'){
+    col_a = parseInt(col_a);
+    col_b = parseInt(col_b);
+  }
 
   // col_a == col_b ? 0 : (col_a > col_b ? 1 : -1)
-  if (col_a > col_b) {
-    return 1;
-  } else if (col_a < col_b) {
-    return -1;
+  if (col_a < col_b) {
+    return sort_column === 'urgency-index' ? 1 : -1;
+  } else if (col_a > col_b) {
+    return sort_column === 'urgency-index' ? -1 : 1;
   } else {
     return 0;
   }
@@ -171,13 +176,18 @@ function update_task(e){
     url: '/tasks/' + task_id,
     data: settings
   }).success(function(data){
-    //Finds the row that we changed
-    console.log(data.priority.color);
-    var task_row = $('#tasks tr[data-task-id=' + data.task.id + ']');
+    //Finds the row that we were editing and updates its fields and priority color
+    var task_row = $('#tasks tr[data-task-id=' + task_id + ']');
     task_row.children('.name').text(data.task.name);
     task_row.children('.desc').text(data.task.desc);
     task_row.children('.duedate').text(data.task.duedate);
+    task_row.children('.priority-id').text(data.priority.id);
+    task_row.children('.urgency-index').text(data.priority.urgency_index);
     task_row.animate({backgroundColor: data.priority.color});
+
+    //sort the table again
+    sorted = $('#tasks tbody tr').sort(sort_by_column);
+    $('#tasks tbody').empty().append(sorted);
 
     //Clear form inputs
     $('#new_task input[type=text]').val('');

@@ -11,7 +11,7 @@ class Task < ActiveRecord::Base
       self.priority = higher_priorities.first(order: 'urgency_index ASC') #Gets the lowest of the higher priorities
       self.save
     end
-
+    self.priority
   end
 
   def decrease_urgency
@@ -22,6 +22,7 @@ class Task < ActiveRecord::Base
       self.priority = lower_priorities.first(order: 'urgency_index DESC') #gets the highest of the lower priorities
       self.save
     end
+    self.priority
   end
 
 end
