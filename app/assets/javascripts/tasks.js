@@ -26,12 +26,14 @@ function sort_by_column(a, b) {
   col_a = $.trim($(a).children('.' + sort_column).text());
   col_b = $.trim($(b).children('.' + sort_column).text());
 
+  // If the table is being sorted by urgency index, turns the values into integers so they get compared correctly.
+  // Strings of integers get compared strangely (e.g. '1' < '11' < '2' < '22' < '3')
   if(sort_column === 'urgency-index'){
     col_a = parseInt(col_a);
     col_b = parseInt(col_b);
   }
 
-  // col_a == col_b ? 0 : (col_a > col_b ? 1 : -1)
+  //Sorts ascending unless the sorting is being done by urgency index, in which case it is descending
   if (col_a < col_b) {
     return sort_column === 'urgency-index' ? 1 : -1;
   } else if (col_a > col_b) {
@@ -41,6 +43,8 @@ function sort_by_column(a, b) {
   }
 }
 
+//Called when one of the header cells is clicked, figures out which sorting that cell corresponds to (by doing some tricky
+// string manipulation), and then calls the sort_rows function to actually perform the sorting
 function sort_table(e) {
    e.preventDefault();
   //grabs everything but the '_sort' from the link's id and sets the sort_column variable to that prefix for use in sort_by_column
@@ -48,16 +52,31 @@ function sort_table(e) {
   var id_prefix = sort_id.substr(0, sort_id.length - 5);
   sort_column = id_prefix;
 
+  sort_rows();
+}
+
+// Sorts the table's rows based on the sort_by_column algorithm. I've separated this function from the sort_table function because
+// in the update_task, increase_row_priority and decrease_row_priority functions, I want to call just this code and not the
+// rest of sort_table()
+function sort_rows() {
   sorted = $('#tasks tbody tr').sort(sort_by_column);
   $('#tasks tbody').empty().append(sorted);
 }
 
+
+
+//Triggered when one of the Edit buttons is pressed. Populates the task form with that row's task's attributes
+//Notice that it also puts a data-task-id attribute onto the Update button, so that the button "knows" which
+// task it will be updating
 function populate_form(e){
   e.preventDefault();
+
+  //remembers the row that the button was pressed in and the task id for that row
+  //note that I have refactored to put data-task-id on rows and not on the buttons themselves
   var task_row = $(this).parent().parent();
   var task_id = task_row.attr('data-task-id');
-  console.log(task_id);
 
+  //gets and stores each of the row's text values, including the hidden priority id, also trimming their whitespace
   var name = $.trim(task_row.find('.name').text());
   var desc = $.trim(task_row.find('.desc').text());
   var duedate = $.trim(task_row.find('.duedate').text());
@@ -75,7 +94,8 @@ function populate_form(e){
   $('#edit-submit').attr('data-task-id', task_id);
 }
 
-//Activates the event handler binding to the delete buttons in the table.
+//Triggered when one of the row's Delete buttons is pressed. Deletes that row's task on the back-end using AJAX
+//and on the front-end in the callback function
 function delete_task(e){
   e.preventDefault();
   console.log('Default Prevented');
@@ -87,17 +107,6 @@ function delete_task(e){
     type: 'DELETE',
     url: id_of_task,
     success: function(data){
-      console.log('Ajax transmitted.  Heres the data');
-      console.log(data);
-
-      // task_row.fadeOut(500);
-
-      // task_row.fadeOut(500).delay(500).remove();
-
-      // task_row.fadeOut(500, function(){
-      //   $(this).remove();
-      // });
-
       //In order to animate color, we need to also add the jQuery UI library. Normal jQuery can animate sizes and positions just fine, but
       // is weirdly missing the color animation feature. Notice that I have included the jQuery UI library in my application layout file
       task_row.animate({
@@ -106,18 +115,29 @@ function delete_task(e){
         $(this).fadeOut(300);
       });
 
+      //SIMPLER WAYS TO REMOVE THE ROW
+      // task_row.fadeOut(500);
+
+      // task_row.fadeOut(500).delay(500).remove();
+
+      // task_row.fadeOut(500, function(){
+      //   $(this).remove();
+      // });
+
     }
   });
   return $(this);
 }
 
+// Called when the Create button is clicked, and uses AJAX to create a task with the given values, both on the server side (in the
+// controller), and on the client side (in the success callback). Then sorts the table.
 function create_task(e){
   //prevents the default behavior of the form, i.e. submitting the form
   //Notice that if this file fails to load or your syntax errors, you will not prevent the default and
   // clicking submit will render a new page with your data on it
   e.preventDefault();
 
-  var settings = {
+  var params = {
     task: {
       name: $('#task_name').val(),
       desc: $('#task_desc').val(),
@@ -126,7 +146,7 @@ function create_task(e){
     }
   };
 
-  $.post('/tasks', settings, function(data) {
+  $.post('/tasks', params, function(data) {
     //Construct an additional row to add to the table, representing one task and its attributes
     var task = $('<tr>').css('background-color', data.priority.color).attr('task-id', data.task.id);
 
@@ -158,11 +178,16 @@ function create_task(e){
   });
 }
 
+// Called when the Update button is clicked, and uses AJAX to update the task with new values, both on the server side (in the
+// controller), and on the client side (in the success callback). Then sorts the table.
 function update_task(e){
   e.preventDefault();
+
+  //Figures out which task you are updating based on the data-task-id attribute on this button. The edit button put this here!
   var task_id = $(this).data('task-id');
 
-  var settings = {
+  //Prepares a JSON object (analogous to a Ruby hash) of the form's values. These will be passed by the AJAX call into params!
+  var params = {
     task: {
       name: $('#task_name').val(),
       desc: $('#task_desc').val(),
@@ -174,7 +199,7 @@ function update_task(e){
   $.ajax({
     type: 'PUT',
     url: '/tasks/' + task_id,
-    data: settings
+    data: params
   }).success(function(data){
     //Finds the row that we were editing and updates its fields and priority color
     var task_row = $('#tasks tr[data-task-id=' + task_id + ']');
@@ -194,31 +219,54 @@ function update_task(e){
   });
 }
 
+//Called when an up arrow button is clicked. Increases that row's priority to the priority with the next highest urgency, updates
+//the data on the back-end and front-end using AJAX
 function increase_row_priority(e){
   e.preventDefault();
   var task_row = $(this).parent().parent();
   var task_id = task_row.data('task-id');
 
+  //An ajax call to the url for increasing a task priority, from which our server will route
+  //us to the corresponding method in the tasks controller. Check this in your 'rake routes' to make sure you know why!
   $.ajax({
     type: 'PUT',
     url: '/tasks/' + task_id + '/increase_urgency'
   }).success(function(data){
+    //if the AJAX call is successful, uses the task_id that we put on our rows to find the row in our table that corresponds to the task...
     var task_row = $('#tasks tr[data-task-id=' + task_id + ']');
+
+    //...and updates that row's priority hidden fields and its background color.
+    // Make sure you understand why 'data' refers to the priority! Hint: look at what your controller method rendered...
+    task_row.children('td.priority-id').text(data.id);
+    task_row.children('td.urgency-index').text(data.urgency_index);
     task_row.animate({backgroundColor: data.color});
+    sort_rows();
   });
+
 }
 
+//Called when a down arrow button is clicked. Decreases that row's priority to the priority with the next lowest urgency, updates
+//the data on the back-end and front-end using AJAX
 function decrease_row_priority(e){
   e.preventDefault();
   var task_row = $(this).parent().parent();
   var task_id = task_row.data('task-id');
 
+  //An ajax call to the url for decreasing a task priority, from which our server will route
+  //us to the corresponding method in the tasks controller. Check this in your 'rake routes' to make sure you know why!
   $.ajax({
     type: 'PUT',
     url: '/tasks/' + task_id + '/decrease_urgency'
   }).success(function(data){
+    //if the AJAX call is successful, uses the task_id that we put on our rows to find the row in our table that corresponds to the task...
     var task_row = $('#tasks tr[data-task-id=' + task_id + ']');
+
+    //...and updates that row's priority hidden fields and its background color.
+    // Make sure you understand why 'data' refers to the priority! Hint: look at what your controller method rendered...
+    task_row.children('td.priority-id').text(data.id);
+    task_row.children('td.urgency-index').text(data.urgency_index);
     task_row.animate({backgroundColor: data.color});
+    sort_rows();
   });
 }
 
