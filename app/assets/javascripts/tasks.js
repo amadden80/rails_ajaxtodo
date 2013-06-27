@@ -1,24 +1,30 @@
 var sort_column = 'urgency-index';
 
+// This used to be much more complicated, but after moving a lot of my logic to the sort functions which are reused in many
+// places, I can just append the task row to the page and call sort_rows(). Essentially, this used to be a necessary function, but now
+// it is extraneous since we've built a more extensible function that sorts the whole table. Old code left but commented out
+// for posterity.
 function add_node(task) {
-  task_name = task.children('.name').text();
-  task_urgency = task.children('.urgency-index').text();
-  var row_list = $('#tasks tbody').children();
+  // NOW-UNECESSARY CODE
+  // task_name = task.children('.name').text();
+  // task_urgency = task.children('.urgency-index').text();
+  // var row_list = $('#tasks tbody').children();
 
-  for (var i = 0; i < row_list.size(); i++) {
-    node = $(row_list[i]);
-    node_name = node.children('.name').text();
-    node_urgency = node.children('.urgency-index').text();
+  // for (var i = 0; i < row_list.size(); i++) {
+  //   node = $(row_list[i]);
+  //   node_name = node.children('.name').text();
+  //   node_urgency = node.children('.urgency-index').text();
 
-    if (task_urgency > node_urgency) {
-      task.insertBefore(node);
-      return;
-    } else if ((task_urgency == node_urgency) && task_name < node_name) {
-      task.insertBefore(node);
-      return;
-    }
-  }
+  //   if (task_urgency > node_urgency) {
+  //     task.insertBefore(node);
+  //     return;
+  //   } else if ((task_urgency == node_urgency) && task_name < node_name) {
+  //     task.insertBefore(node);
+  //     return;
+  //   }
+  // }
   $('#tasks tbody').append(task);
+  sort_rows();
 }
 
 //A field-agnostic single-column sorter
