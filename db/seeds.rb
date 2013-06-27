@@ -16,12 +16,12 @@ t12 = Task.create(name: 'Ride Dirty', desc: 'Rollin, no hatin', duedate: '2013-0
 t13 = Task.create(name: 'Learn PHP', desc: 'just kidding', duedate: '2013-04-13')
 t14 = Task.create(name: 'Rescue Dog', desc: 'whatever', duedate: '3011-04-08')
 
-p1 = Priority.create(name: 'Emergency', color: 'red', urgency_index: 11)
-p2 = Priority.create(name: 'Urgent', color: 'orange', urgency_index: 9)
-p3 = Priority.create(name: 'Important', color: 'yellow', urgency_index: 7)
-p4 = Priority.create(name: 'Neutral', color: 'lightgreen', urgency_index: 5)
-p5 = Priority.create(name: 'Casual', color: 'lightblue', urgency_index: 3)
-p6 = Priority.create(name: 'Unimportant', color: 'grey', urgency_index: 1)
+p1 = Priority.create(name: 'Emergency', color: '#FF0000', urgency_index: 11)
+p2 = Priority.create(name: 'Urgent', color: '#FF9933', urgency_index: 9)
+p3 = Priority.create(name: 'Important', color: '#FFFF33', urgency_index: 7)
+p4 = Priority.create(name: 'Neutral', color: '#66FF66', urgency_index: 5)
+p5 = Priority.create(name: 'Casual', color: '#99FFFF', urgency_index: 3)
+p6 = Priority.create(name: 'Unimportant', color: '#505050', urgency_index: 1)
 
 p1.tasks << t01 << t02
 p2.tasks << t03 << t04 << t05
