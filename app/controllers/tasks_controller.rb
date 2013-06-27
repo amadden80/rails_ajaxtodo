@@ -32,7 +32,7 @@ class TasksController < ApplicationController
     task = Task.find(params[:id])
     task.increase_urgency #calls a new method defined in the Task model
 
-    render json: task.priority
+    render json: task.priority #I don't really care about the task at this point, just what its new priority is
   end
 
   def decrease_urgency
