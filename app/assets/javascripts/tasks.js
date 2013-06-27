@@ -27,8 +27,29 @@ function add_node(task) {
   sort_rows();
 }
 
-//A field-agnostic single-column sorter
-function sort_by_column(a, b) {
+//Called when one of the header cells is clicked, figures out which sorting that cell corresponds to (by doing some tricky
+// string manipulation), and then calls the sort_rows function to actually perform the sorting
+function sort_table(e) {
+   e.preventDefault();
+  //grabs everything but the '_sort' from the link's id and sets the sort_column variable to that prefix for use in column_compare
+  var sort_id = $(this).attr('id');
+  var id_prefix = sort_id.substr(0, sort_id.length - 5);
+  sort_column = id_prefix;
+
+  sort_rows();
+}
+
+// Sorts the table's rows based on the column_compare algorithm. I've separated this function from the sort_table function because
+// in the update_task, increase_row_priority and decrease_row_priority functions, I want to call just this code and not the
+// rest of sort_table()
+function sort_rows() {
+  sorted = $('#tasks tbody tr').sort(column_compare);
+  $('#tasks tbody').empty().append(sorted);
+}
+
+// A comparison function for two rows of a table, comparing them by a td with a shared class. This used to be
+// called sort_by_column, but was renamed because it compares two rows -- it does not sort
+function column_compare(a, b) {
   col_a = $.trim($(a).children('.' + sort_column).text());
   col_b = $.trim($(b).children('.' + sort_column).text());
 
@@ -48,28 +69,6 @@ function sort_by_column(a, b) {
     return 0;
   }
 }
-
-//Called when one of the header cells is clicked, figures out which sorting that cell corresponds to (by doing some tricky
-// string manipulation), and then calls the sort_rows function to actually perform the sorting
-function sort_table(e) {
-   e.preventDefault();
-  //grabs everything but the '_sort' from the link's id and sets the sort_column variable to that prefix for use in sort_by_column
-  var sort_id = $(this).attr('id');
-  var id_prefix = sort_id.substr(0, sort_id.length - 5);
-  sort_column = id_prefix;
-
-  sort_rows();
-}
-
-// Sorts the table's rows based on the sort_by_column algorithm. I've separated this function from the sort_table function because
-// in the update_task, increase_row_priority and decrease_row_priority functions, I want to call just this code and not the
-// rest of sort_table()
-function sort_rows() {
-  sorted = $('#tasks tbody tr').sort(sort_by_column);
-  $('#tasks tbody').empty().append(sorted);
-}
-
-
 
 //Triggered when one of the Edit buttons is pressed. Populates the task form with that row's task's attributes
 //Notice that it also puts a data-task-id attribute onto the Update button, so that the button "knows" which
@@ -96,7 +95,7 @@ function populate_form(e){
 
   //Hide the Create Task button and show the Update Task button
   $('#submit').addClass('hidden');
-  $('#edit-submit').show('hidden');
+  $('#edit-submit').removeClass('hidden');
   $('#edit-submit').attr('data-task-id', task_id);
 }
 
@@ -216,9 +215,10 @@ function update_task(e){
     task_row.children('.urgency-index').text(data.priority.urgency_index);
     task_row.animate({backgroundColor: data.priority.color});
 
-    //sort the table again
-    sorted = $('#tasks tbody tr').sort(sort_by_column);
-    $('#tasks tbody').empty().append(sorted);
+    sort_rows();
+
+    $('#submit').removeClass('hidden');
+    $('#edit-submit').addClass('hidden');
 
     //Clear form inputs
     $('#new_task input[type=text]').val('');
