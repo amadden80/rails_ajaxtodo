@@ -204,25 +204,9 @@ function update_task(e){
   $.ajax({
     type: 'PUT',
     url: '/tasks/' + task_id,
-    data: params
-  }).success(function(data){
-    //Finds the row that we were editing and updates its fields and priority color
-    var task_row = $('#tasks tr[data-task-id=' + task_id + ']');
-    task_row.children('.name').text(data.task.name);
-    task_row.children('.desc').text(data.task.desc);
-    task_row.children('.duedate').text(data.task.duedate);
-    task_row.children('.priority-id').text(data.priority.id);
-    task_row.children('.urgency-index').text(data.priority.urgency_index);
-    task_row.animate({backgroundColor: data.priority.color});
-
-    sort_rows();
-
-    $('#submit').removeClass('hidden');
-    $('#edit-submit').addClass('hidden');
-
-    //Clear form inputs
-    $('#new_task input[type=text]').val('');
-  });
+    data: params,
+    dataType: 'script'
+  })
 }
 
 //Called when an up arrow button is clicked. Increases that row's priority to the priority with the next highest urgency, updates

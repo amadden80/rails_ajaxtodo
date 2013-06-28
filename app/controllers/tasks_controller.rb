@@ -1,7 +1,9 @@
 class TasksController < ApplicationController
+
+  before_filter :ordered_tasks, only: [:new, :update]
+
   def new
     @task = Task.new
-    @tasks = Task.joins(:priority).order('priorities.urgency_index DESC, name ASC' )
     @priorities = Priority.all
   end
 
@@ -22,9 +24,14 @@ class TasksController < ApplicationController
   def update
     task = Task.find(params[:id])
     if task.update_attributes(params[:task])
-      render json: {task: task, priority: task.priority}
+      # render json: {task: task, priority: task.priority}
+      respond_to do |format|
+        format.js
+      end
     else
-      render text: 'ERROR WHILE UPDATING. CHECK RAILS SERVER LOG.'
+      respond_to do |format|
+        format.js { render status: 500, text: 'Server error' }
+      end
     end
   end
 
@@ -40,6 +47,11 @@ class TasksController < ApplicationController
     task.decrease_urgency #calls a new method defined in the Task model
 
     render json: task.priority
+  end
+
+  private
+  def ordered_tasks
+    @tasks = Task.joins(:priority).order('priorities.urgency_index DESC, name ASC' )
   end
 
 end

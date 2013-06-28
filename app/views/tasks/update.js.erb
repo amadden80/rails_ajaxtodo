@@ -1,0 +1,7 @@
+$('#tasks tbody').empty().append("<%=j render partial: 'tasks/partials/tasks' %>");
+
+$('#submit').removeClass('hidden');
+$('#edit-submit').addClass('hidden');
+
+//Clear form inputs
+$('#new_task input[type=text]').val('');

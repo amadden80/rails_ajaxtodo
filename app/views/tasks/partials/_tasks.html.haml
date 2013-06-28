@@ -1,0 +1,21 @@
+- @tasks.each do |task|
+  %tr{:'data-task-id' => task.id, style: "background-color: #{task.priority.color}"}
+    %td.arrows
+      = link_to increase_urgency_task_path(task), class: 'up-arrow-link' do
+        %i.general.foundicon-up-arrow
+      = link_to decrease_urgency_task_path(task), class: 'down-arrow-link' do
+        %i.general.foundicon-down-arrow
+    %td.name
+      = task.name
+    %td.desc
+      = task.desc
+    %td.duedate
+      = task.duedate
+    %td.urgency-index.hidden
+      = task.priority.urgency_index
+    %td.priority-id.hidden
+      = task.priority.id
+    %td.options
+      / =link_to 'View', '#', class: 'button view-button small', :'data-id' => task.id
+      =link_to 'Delete', '#', class: 'button delete-button small alert'
+      =link_to 'Edit', '#', class: 'button edit-button small'

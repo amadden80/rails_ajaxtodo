@@ -9,4 +9,5 @@ Ajaxtodo::Application.routes.draw do
     end
   end
   resources :priorities, only: [:new, :index, :create]
+
 end
